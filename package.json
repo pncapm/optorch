@@ -4,7 +4,11 @@
   "description": "",
   "main": "app.js",
   "dependencies": {
-    "ping": "^0.2.2"
+    "elasticsearch": "^15.2.0",
+    "external-ip": "^2.1.1",
+    "getmac": "^1.4.6",
+    "ping": "^0.2.2",
+    "quick-local-ip": "^1.0.7"
   },
   "devDependencies": {},
   "scripts": {
