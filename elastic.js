@@ -1,11 +1,12 @@
 // variables that can be set
 var ver = "0.3";
 var elkDB = 'https://optorch.com:9201';
-// internal variables that should be left alone
 
+// internal variables that should be left alone
 var macaddr;
 var xip;
 var nodemesh = [];
+const ping = require('ping');
 const elasticsearch = require('elasticsearch');
 const nic = require('getmac');
 var nodename = require('os').hostname();
@@ -60,9 +61,23 @@ async function Main(){
     console.log("[x] Loaded internal IP: " + ip);
     xip = await getpublicIP(); console.log("[x] Loaded External IP: " + xip);
     macaddr = await getMac();
-    await CheckELK();
-    await UpdateSensorNode();
-    console.log('done');
+    //await CheckELK();
+    //await UpdateSensorNode();
+    //console.log('done');
+    await UpdateMesh();
+    var tUpdateMesh = setInterval(UpdateMesh, 10000);
+    var tSonarPing = setInterval(SonarPing,1000);
+}
+
+function SonarPing(){
+    if (nodemesh.length == 0){console.log("[.] SonarPing was called, but there are zero nodes in mesh.")};
+    nodemesh.forEach(function(node){
+        ping.sys.probe(node.iIP, function(active){
+            var info = active ? node.SensorName + ' = Active' : node.SensorName + ' = DOWN';
+            console.log (info);
+        });
+
+    })
 }
 
 function UpdateMesh(){
@@ -72,13 +87,23 @@ function UpdateMesh(){
             index: 'sensor_grid',
             type: 'sensor_node'
         }).then(function(resp){
+            nodemesh.length = 0;
             var results = resp.hits.hits;
             results.forEach(function(resp){
-                console.log(resp._source);
-            })
+                if(resp._source.SensorMac != macaddr){
+                    nodemesh.push({
+                        "SensorName": resp._source.SensorName,
+                        "iIP": resp._source.iIP,
+                        "MAC": resp._source.SensorMac
+                    });
+                }
+            });
+            console.log("[ ] Updated node list.  Total workload: " + nodemesh.length);
+            resolve(nodemesh);
         });
     });
 }
+
 function UpdateSensorNode() {
     return new Promise(function(resolve,reject){
         client.search({
@@ -127,7 +152,7 @@ function UpdateSensorNode() {
         });
     });
 }
-//Main();
-UpdateMesh();
+Main();
+
 //var iUpdateSensorGrid = setInterval(UpdateSensorNode, 1000);
 //UpdateSensorNode();

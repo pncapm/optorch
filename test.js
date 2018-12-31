@@ -4,3 +4,12 @@
 // });
 
 let  test = [];
+let nodemesh = [];
+
+nodemesh.push({
+    "SensorName": "resp._source.SensorName",
+    "iIP": "1",
+    "MAC": "1"
+});
+
+console.log(nodemesh.SensorName);
