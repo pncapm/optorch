@@ -8,6 +8,7 @@
     "external-ip": "^2.1.1",
     "getmac": "^1.4.6",
     "ping": "^0.2.2",
+    "public-ip": "^3.0.0",
     "quick-local-ip": "^1.0.7"
   },
   "devDependencies": {},
