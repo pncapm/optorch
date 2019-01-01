@@ -6,7 +6,8 @@ var elkDB = 'https://optorch.com:9201';
 var macaddr;
 var xip;
 var nodemesh = [];
-const ping = require('ping');
+var tcpping = require("tcp-ping");
+var ping = require ("ping");
 const elasticsearch = require('elasticsearch');
 const nic = require('getmac');
 var nodename = require('os').hostname();
@@ -54,6 +55,7 @@ function CheckELK(){
         });
     });
 }
+
 //main loop
 async function Main(){
     console.log("[x] Starting Operation Torch " + ver + " on " + Date());
@@ -61,27 +63,55 @@ async function Main(){
     console.log("[x] Loaded internal IP: " + ip);
     xip = await getpublicIP(); console.log("[x] Loaded External IP: " + xip);
     macaddr = await getMac();
-    //await CheckELK();
-    //await UpdateSensorNode();
-    //console.log('done');
+    await CheckELK();
+    await UpdateSensorNode();
     await UpdateMesh();
-    var tUpdateMesh = setInterval(UpdateMesh, 10000);
-    var tSonarPing = setInterval(SonarPing,1000);
+    //var tUpdateMesh = setInterval(UpdateMesh, 10000);
+    //var tSonarPing = setInterval(SonarPing,1000);
+    SonarPing();
 }
 
-function SonarPing(){
-    if (nodemesh.length == 0){console.log("[.] SonarPing was called, but there are zero nodes in mesh.")};
+function SonarTCPPing(){
+    if (nodemesh.length == 0){console.log("[.] SonarTCPPing was called, but there are zero nodes in the mesh.")};
     nodemesh.forEach(function(node){
-        ping.sys.probe(node.iIP, function(active){
-            var info = active ? node.SensorName + ' = Active' : node.SensorName + ' = DOWN';
-            console.log (info);
+        tcpping.ping({ address: node.iIP, attempts:'1'}, function(err, results){
+            var info = results.results;
+            info.forEach(function(answer){
+                console.log(answer);
+            });
+            console.log (node.iIP + " " + info.avg);
         });
 
     })
 }
 
+function SonarPing(){
+    if (nodemesh.length == 0){console.log("[.] SonarPing was called, but there are zero nodes in the mesh.")};
+        //return new Promise(function(resolve, reject){
+        nodemesh.forEach(function(host){
+            ping.promise.probe(host.iIP)
+            .then(function(result) {
+                console.log("from: " + xip + " MAC: " + macaddr + " to: " + result.numeric_host + " " + host.MAC + " took: " + result.time + " ms.");
+                client.index({
+                    index: 'sonar_ping',
+                    type: 'ping_result',
+                    body: {
+                        Location: xip,
+                        fromMAC: macaddr,
+                        toMAC: host.MAC,
+                        Success: result.alive,
+                        response_time: (result.time).toFixed(0),
+                        timestamp: new Date().getTime()
+                    }
+                });
+        });
+
+        });
+        //});
+}
+
 function UpdateMesh(){
-    // Connect to cluster and return all nodes
+    // Connect to cluster and return all nodes minus this one
     return new Promise(function(resolve,reject){
         client.search({
             index: 'sensor_grid',
@@ -90,6 +120,7 @@ function UpdateMesh(){
             nodemesh.length = 0;
             var results = resp.hits.hits;
             results.forEach(function(resp){
+                //console.log("MAC from cluster " + resp._source.SensorMac + " MAC local " + macaddr);
                 if(resp._source.SensorMac != macaddr){
                     nodemesh.push({
                         "SensorName": resp._source.SensorName,
@@ -98,7 +129,7 @@ function UpdateMesh(){
                     });
                 }
             });
-            console.log("[ ] Updated node list.  Total workload: " + nodemesh.length);
+            console.log("[ ] Updated node mesh.  My total workload: " + nodemesh.length);
             resolve(nodemesh);
         });
     });

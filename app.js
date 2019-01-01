@@ -7,7 +7,7 @@ const ping = require('ping');
 const elasticsearch = require('elasticsearch');
 
 //internal
-var pinglist = [];
+var pinglist = ['192.168.1.1'];
 const client = new elasticsearch.Client( {
     hosts: [        
      'https://optorch.com:9201'
@@ -39,15 +39,15 @@ function UpdateSensorGrid(){
         console.trace(err.message);
     });
 }
-var iUpdateSensorGrid = setInterval(UpdateSensorGrid, 1000);
+//var iUpdateSensorGrid = setInterval(UpdateSensorGrid, 1000);
 
 function DoPing(){
     console.log("running DoPing" + pinglist);
     pinglist.forEach(function(host){
             ping.sys.probe(host, function(active){
                 var info = active ? 'IP ' + host + ' = Active' : 'IP ' + host + ' = DOWN';
-                console.log (info);
+                console.log (active.time);
             });
     });
 }
-//var iDoPing = setInterval(DoPing, 1000);
+DoPing();
