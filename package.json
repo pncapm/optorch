@@ -7,6 +7,7 @@
     "elasticsearch": "^15.2.0",
     "external-ip": "^2.1.1",
     "getmac": "^1.4.6",
+    "iplocation": "^6.0.4",
     "net-ping": "^1.2.3",
     "ping": "^0.2.2",
     "public-ip": "^3.0.0",
