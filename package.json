@@ -9,7 +9,7 @@
     "iplocation": "^6.0.4",
     "ping": "^0.2.2",
     "public-ip": "^3.0.0",
-    "quick-local-ip": "^1.0.7",
+    "quick-local-ip": "^1.0.7"
   },
   "devDependencies": {},
   "scripts": {
