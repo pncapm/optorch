@@ -210,7 +210,7 @@ function UpdateSensorNode() {
                         "iIP": ip,
                         "xIP": xip,
                         "timestamp": new Date().getTime(),
-                        "location": {"lat": location.lat, "lon": location.lon},
+                        "location": {"lat": location.latitude, "lon": location.longitude},
                         "latitude": location.latitude,
                         "longitude": location.longitude
                     }
