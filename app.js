@@ -109,8 +109,16 @@ function SonarPing(){
     if (nodemesh.length == 0){console.log("[.] SonarPing was called, but there are zero nodes in the mesh.")};
         nodemesh.forEach(function(node){
             ping.promise.probe(node.IP, { timeout: 3})
+            //ping.promise.probe('196.168.10.1', { timeout: 3})
             .then(function(result) {
-                //console.log("from: " + ip + " MAC: " + macaddr + " to: " + node.IP + " " + node.MAC + " took: " + result.time + " ms.");
+                console.log("from: " + ip + " MAC: " + macaddr + " to: " + node.IP + " " + node.MAC + " took: " + result.time + " ms.");
+                if (result.alive){
+                    // response time valid, adjust to integer for storage
+                    var response_time = (result.time).toFixed(0);
+                } else {
+                    // could not ping, so must force response time to integer for storage
+                    var response_time = 0;
+                }
                 client.index({
                     index: 'sonar_ping',
                     type: 'ping_result',
@@ -120,7 +128,7 @@ function SonarPing(){
                         toMAC: node.MAC,
                         Local : node.local,
                         Success: result.alive,
-                        response_time: (result.time).toFixed(0),
+                        response_time: response_time,
                         timestamp: new Date().getTime()
                     }
                 });

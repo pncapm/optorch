@@ -5,15 +5,11 @@
   "main": "app.js",
   "dependencies": {
     "elasticsearch": "^15.2.0",
-    "external-ip": "^2.1.1",
     "getmac": "^1.4.6",
     "iplocation": "^6.0.4",
-    "net-ping": "^1.2.3",
     "ping": "^0.2.2",
     "public-ip": "^3.0.0",
     "quick-local-ip": "^1.0.7",
-    "raw-socket": "^1.6.4",
-    "tcp-ping": "^0.1.1"
   },
   "devDependencies": {},
   "scripts": {
