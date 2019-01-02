@@ -9,7 +9,7 @@ var macaddr;
 var xip;
 var nodemesh = [];
 var location;
-const tcpping = require("tcp-ping");
+//const tcpping = require("tcp-ping");
 const ping = require ("ping");
 const elasticsearch = require('elasticsearch');
 const nic = require('getmac');
