@@ -3,6 +3,7 @@ const ver = "0.3";
 const elkDB = 'https://optorch.com:9201';
 const ping_internal = 5; // how long between pings in seconds
 const updatemesh_interval = 120 // how long between getting new mesh data in seconds
+const UpdateSensorNode_interval = 600  // how long to wait between cluster heartbeats
 
 // internal variables that should be left alone
 var macaddr;
@@ -89,6 +90,7 @@ async function Main(){
     await UpdateMesh();
     var tUpdateMesh = setInterval(UpdateMesh, updatemesh_interval * 1000);console.log("[ ] Starting Mesh Update loop.  " + updatemesh_interval + " seconds between each check in with cluster.");
     var tSonarPing = setInterval(SonarPing, ping_internal * 1000);console.log("[ ] Starting Sonar Ping loop.  Running " + nodemesh.length + " test(s) every " + ping_internal + " seconds.");
+    var tUpdateSensorNode = setInterval(UpdateSensorNode, UpdateSensorNode_interval * 1000);console.log("[ ] Starting Update Loop for this node.  Heartbeat with cluster occurs every " + UpdateSensorNode_interval + " seconds.");
     //SonarPing();
 }
 
