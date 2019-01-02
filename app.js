@@ -2,14 +2,16 @@
 const ver = "0.3";
 const elkDB = 'https://optorch.com:9201';
 const ping_internal = 5; // how long between pings in seconds
-const updatemesh_interval = 120 // how long between getting new mesh data in seconds
-const UpdateSensorNode_interval = 600  // how long to wait between cluster heartbeats
+const updatemesh_interval = 1 // how long between getting new mesh data in *minutes*
+const UpdateSensorNode_interval = 1  // how long to wait between cluster heartbeats in *minutes*
+const NodeAgeLimit = 4 //maximum age in *minutes* other nodes will be included before being ignored as dead
 
 // internal variables that should be left alone
 var macaddr;
 var xip;
 var nodemesh = [];
 var location;
+
 //const tcpping = require("tcp-ping");
 const ping = require ("ping");
 const elasticsearch = require('elasticsearch');
@@ -28,6 +30,7 @@ const client = new elasticsearch.Client( {
     ssl: {rejectUnauthorized: false}
 });
 function getMac(){
+    //return this device's internal IP address
     return new Promise(function(resolve, reject){
         nic.getMac(function(err,macAddress){
             macaddr = macAddress.replace(/:/g,'-');
@@ -37,6 +40,7 @@ function getMac(){
     });
 }
 function getpublicIP(){
+    //return this device's external IP address.
     return new Promise(function(resolve,reject){
         var a = publicIP.v4();
         resolve(a);
@@ -46,6 +50,7 @@ function getpublicIP(){
     });
 }
 function getLocation(){
+    //Pull basic geographic information based on external IP
     return iplocation(xip, ["https://ipinfo.io/*"])
     .then((result)=> {
         location = result;
@@ -62,6 +67,7 @@ function getLocation(){
     });
 }
 function CheckELK(){
+    //Ping the ELK cluster to ensure this device will be able to communicate with home base
     return new Promise(function(resolve,reject){
         client.ping({
             requestTimeout: 3000 // use 3s timeout for ELK
@@ -79,6 +85,7 @@ function CheckELK(){
 
 //main loop
 async function Main(){
+    //Main loop- this sets initial values, logs startup, and then initiates loops for each activity
     console.log("[x] Starting Operation Torch " + ver + " on " + Date());
     console.log("[x] Loaded nodename: " + nodename);
     console.log("[x] Loaded internal IP: " + ip);
@@ -88,13 +95,15 @@ async function Main(){
     await CheckELK();
     await UpdateSensorNode();
     await UpdateMesh();
-    var tUpdateMesh = setInterval(UpdateMesh, updatemesh_interval * 1000);console.log("[ ] Starting Mesh Update loop.  " + updatemesh_interval + " seconds between each check in with cluster.");
+    var tUpdateMesh = setInterval(UpdateMesh, updatemesh_interval * 60000);console.log("[ ] Starting Mesh Update loop.  " + updatemesh_interval + " minutes between each check in with cluster.");
     var tSonarPing = setInterval(SonarPing, ping_internal * 1000);console.log("[ ] Starting Sonar Ping loop.  Running " + nodemesh.length + " test(s) every " + ping_internal + " seconds.");
-    var tUpdateSensorNode = setInterval(UpdateSensorNode, UpdateSensorNode_interval * 1000);console.log("[ ] Starting Update Loop for this node.  Heartbeat with cluster occurs every " + UpdateSensorNode_interval + " seconds.");
+    var tUpdateSensorNode = setInterval(UpdateSensorNode, UpdateSensorNode_interval * 60000);console.log("[ ] Starting Update Loop for this node.  Heartbeat with cluster occurs every " + UpdateSensorNode_interval + " minutes.");
     //SonarPing();
 }
 
+//All functions labelled 'Sonar' are one-time pulses across the network for all devices this one knows about
 function SonarTCPPing(){
+    //Framework (not in use yet) for a TCP ping function allowing port checks
     if (nodemesh.length == 0){console.log("[.] SonarTCPPing was called, but there are zero nodes in the mesh.")};
     nodemesh.forEach(function(node){
         tcpping.ping({ address: node.iIP, attempts:'1'}, function(err, results){
@@ -108,6 +117,7 @@ function SonarTCPPing(){
 }
 
 function SonarPing(){
+    //Ping all known devices in the mesh and upload success/ping times to cluster
     if (nodemesh.length == 0){console.log("[.] SonarPing was called, but there are zero nodes in the mesh.")};
         nodemesh.forEach(function(node){
             ping.promise.probe(node.IP, { timeout: 3})
@@ -144,7 +154,14 @@ function UpdateMesh(){
     return new Promise(function(resolve,reject){
         client.search({
             index: 'sensor_grid',
-            type: 'sensor_node'
+            type: 'sensor_node',
+            "body": {
+                "query": {
+                    "range" :{
+                        "timestamp": {"gte" : "now-" + NodeAgeLimit + "m"}
+                    }
+                }
+            }
         }).then(function(resp){
             nodemesh.length = 0;
             var results = resp.hits.hits;
@@ -171,6 +188,7 @@ function UpdateMesh(){
 }
 
 function UpdateSensorNode() {
+    // Connect to cluster and either add this node as a new one or refresh as current one
     return new Promise(function(resolve,reject){
         client.search({
             index: 'sensor_grid',
