@@ -111,7 +111,7 @@ function SonarPing(){
             ping.promise.probe(node.IP, { timeout: 3})
             //ping.promise.probe('196.168.10.1', { timeout: 3})
             .then(function(result) {
-                console.log("from: " + ip + " MAC: " + macaddr + " to: " + node.IP + " " + node.MAC + " took: " + result.time + " ms.");
+                //console.log("from: " + ip + " MAC: " + macaddr + " to: " + node.IP + " " + node.MAC + " took: " + result.time + " ms.");
                 if (result.alive){
                     // response time valid, adjust to integer for storage
                     var response_time = (result.time).toFixed(0);
