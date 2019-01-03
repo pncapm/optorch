@@ -4,7 +4,7 @@ const elkDB = 'https://optorch.com:9201';
 const ping_internal = 5; // how long between pings in seconds
 const updatemesh_interval = 1 // how long between getting new mesh data in *minutes*
 const UpdateSensorNode_interval = 1  // how long to wait between cluster heartbeats in *minutes*
-const NodeAgeLimit = 4 //maximum age in *minutes* other nodes will be included before being ignored as dead
+const NodeAgeLimit = 40 //maximum age in *minutes* other nodes will be included before being ignored as dead
 
 // internal variables that should be left alone
 var macaddr;
@@ -135,13 +135,20 @@ function SonarPing(){
                     index: 'sonar_ping',
                     type: 'ping_result',
                     body: {
-                        Location: xip,
-                        fromMAC: macaddr,
+                        LocationIP: xip,
                         toMAC: node.MAC,
-                        Local : node.local,
+                        Local: node.local,
                         Success: result.alive,
                         response_time: response_time,
-                        timestamp: new Date().getTime()
+                        timestamp: new Date().getTime(),
+                        toSensorName: node.SensorName,
+                        sensorName: nodename,
+                        SensorMac: macaddr,
+                        iIP: ip,
+                        xIP: xip,
+                        geolocation: {"lat": location.latitude, "lon": location.longitude},
+                        latitude: location.latitude,
+                        longitude: location.longitude
                     }
                 });
         });
@@ -177,7 +184,8 @@ function UpdateMesh(){
                     nodemesh.push({
                         "IP": location,
                         "MAC": resp._source.SensorMac,
-                        "local": local
+                        "local": local,
+                        "SensorName": resp._source.SensorName
                     });
                 }
             });
