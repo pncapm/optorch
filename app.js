@@ -4,7 +4,7 @@ const elkDB = 'https://optorch.com:9201';
 const ping_internal = 5; // how long between pings in seconds
 const updatemesh_interval = 1 // how long between getting new mesh data in *minutes*
 const UpdateSensorNode_interval = 1  // how long to wait between cluster heartbeats in *minutes*
-const NodeAgeLimit = 40 //maximum age in *minutes* other nodes will be included before being ignored as dead
+const NodeAgeLimit = 5 //maximum age in *minutes* other nodes will be included before being ignored as dead
 
 // internal variables that should be left alone
 var macaddr;
@@ -123,7 +123,7 @@ function SonarPing(){
             ping.promise.probe(node.IP, { timeout: 3})
             //ping.promise.probe('196.168.10.1', { timeout: 3})
             .then(function(result) {
-                //console.log("from: " + ip + " MAC: " + macaddr + " to: " + node.IP + " " + node.MAC + " took: " + result.time + " ms.");
+                //console.log(result.alive + " from: " + ip + " MAC: " + macaddr + " to: " + node.IP + " " + node.MAC + " took: " + result.time + " ms.");
                 if (result.alive){
                     // response time valid, adjust to integer for storage
                     var response_time = (result.time).toFixed(0);
@@ -148,7 +148,10 @@ function SonarPing(){
                         xIP: xip,
                         geolocation: {"lat": location.latitude, "lon": location.longitude},
                         latitude: location.latitude,
-                        longitude: location.longitude
+                        longitude: location.longitude,
+                        City: location.city,
+                        region: location.region,
+                        zip: location.zip
                     }
                 });
         });
