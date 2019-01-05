@@ -118,7 +118,7 @@ function SonarTCPPing(){
 
 function SonarPing(){
     //Ping all known devices in the mesh and upload success/ping times to cluster
-    if (nodemesh.length == 0){console.log("[.] SonarPing was called, but there are zero nodes in the mesh.")};
+    if (nodemesh.length == 0){console.log("[.] SonarPing was called, but there are no other active nodes in the mesh.")};
         nodemesh.forEach(function(node){
             ping.promise.probe(node.IP, { timeout: 3})
             //ping.promise.probe('196.168.10.1', { timeout: 3})
