@@ -7,6 +7,7 @@
     "elasticsearch": "^15.2.0",
     "getmac": "^1.4.6",
     "iplocation": "^6.0.4",
+    "nodemon": "^1.18.9",
     "ping": "^0.2.2",
     "public-ip": "^3.0.0",
     "quick-local-ip": "^1.0.7"
