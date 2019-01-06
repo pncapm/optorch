@@ -1,6 +1,7 @@
 // variables that can be set
-const ver = "0.3";
+const ver = "0.4";
 const elkDB = 'https://optorch.com:9201';
+var wwwport = 90; // port the web server should use
 const ping_internal = 5; // how long between pings in seconds
 const updatemesh_interval = 1 // how long between getting new mesh data in *minutes*
 const UpdateSensorNode_interval = 1  // how long to wait between cluster heartbeats in *minutes*
@@ -20,6 +21,9 @@ const nodename = require('os').hostname();
 const ip = require('quick-local-ip').getLocalIP4();
 const publicIP = require('public-ip');
 const iplocation = require("iplocation").default;
+const www = require('http');
+const fs = require('fs');
+const wwwpath = require('path');
 
 //interal functions/setup
 const client = new elasticsearch.Client( {
@@ -82,6 +86,43 @@ function CheckELK(){
         });
     });
 }
+function startWebServer(){
+    //startup a simple webserver for TCP pings and file downloads
+    return new Promise(function(resolve, reject){
+        www.createServer(function (req, res){
+            var filePath = './www' + req.url;
+            if (filePath == './www/')
+                filePath = './www/index.html';
+            var extname = wwwpath.extname(filePath);
+               var contentType = 'text/html';
+            switch (extname) {
+                case '.zip':
+                    contentType = 'application/octet-stream';
+                    break;
+            }
+            fs.readFile(filePath, function(error, content){
+                if (error){
+                    if(error.code == 'ENOENT'){
+                        fs.readFile('./www/404.html', function(error, content){
+                            res.writeHead(200, { 'content-Type': 'text/html'});
+                            res.end(content, 'utf-8');
+                        });
+                    } else {
+                        res.writeHead(500);
+                        res.end('Sorry, got this error: '+error.code+' ..'+filePath+'\n');
+                        res.end();
+                    }
+                }
+                else {
+                    res.writeHead(200, { 'Content-Type': contentType });
+                    res.end(content, 'utf-8');
+                }
+            });
+        }).listen(wwwport);
+        console.log("[x] Started internal webserver on port "+wwwport);
+        resolve();
+    });
+}
 
 //main loop
 async function Main(){
@@ -93,6 +134,7 @@ async function Main(){
     macaddr = await getMac();
     location = await getLocation();
     await CheckELK();
+    await startWebServer();
     await UpdateSensorNode();
     await UpdateMesh();
     var tUpdateMesh = setInterval(UpdateMesh, updatemesh_interval * 60000);console.log("[ ] Starting Mesh Update loop.  " + updatemesh_interval + " minutes between each check in with cluster.");
