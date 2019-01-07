@@ -1,9 +1,9 @@
 {
   "name": "optorch",
   "version": "0.0.2",
-  "auto-updater":{
-      "repo":"/pncapm/optorch",
-      "branch":"master"
+  "auto-updater": {
+    "repo": "/pncapm/optorch",
+    "branch": "master"
   },
   "description": "",
   "main": "app.js",
@@ -15,7 +15,8 @@
     "nodemon": "^1.18.9",
     "ping": "^0.2.2",
     "public-ip": "^3.0.0",
-    "quick-local-ip": "^1.0.7"
+    "quick-local-ip": "^1.0.7",
+    "tcp-ping": "^0.1.1"
   },
   "devDependencies": {},
   "scripts": {
