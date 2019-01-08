@@ -6,28 +6,20 @@ const updatemesh_interval = 1 // how long between getting new mesh data in *minu
 const UpdateSensorNode_interval = 1  // how long to wait between cluster heartbeats in *minutes*
 const NodeAgeLimit = 5 //maximum age in *minutes* other nodes will be included before being ignored as dead
 
-// internal variables that should be left alone
+// global variable setup (not user changeable)
 global.nodemesh = [];
-
 
 // Include local files
 const init = require("./lib/init.js"); // all startup/initial check functions
 const webserver = require("./lib/webserver.js") // my internal webserver startup/config
 const updates = require("./lib/updates.js") //functions that update the sensor grid
-const sonar = require("./lib/sonar.js") // all functions intended to run as loops against the nodemesh array
-
-// Include NPM modules
-const ping = require ("ping");
-const nodename = require('os').hostname();
-const ip = require('quick-local-ip').getLocalIP4();
-//const tcpping = require("tcp-ping");
+const sonar = require("./lib/sonar.js") // all functions intended to run as loops against the nodemesh array and record results to cluster
 
 //main loop
-async function Main(){
-    //Main loop- this sets initial values, logs startup, and then initiates loops for each activity
+async function Main(){ //Main loop- this sets initial values, logs startup, and then initiates loops for each activity
     console.log("[x] Starting Operation Torch on " + Date());
-    console.log("[x] Loaded nodename: " + nodename);
-    console.log("[x] Loaded internal IP: " + ip);
+    const nodename = require('os').hostname(); console.log("[x] Loaded nodename: " + nodename);
+    const ip = require('quick-local-ip').getLocalIP4(); console.log("[x] Loaded internal IP: " + ip);
     xip = await init.getpublicIP(); console.log("[x] Loaded External IP: " + xip);
     macaddr = await init.getMac();
     location = await init.getLocation(xip);
@@ -40,5 +32,4 @@ async function Main(){
     var tUpdateSensorNode = setInterval(function(){updates.UpdateSensorNode(client, nodename, macaddr, ip, xip, location);}, UpdateSensorNode_interval * 60000);console.log("[ ] Starting Update Loop for this node.  Heartbeat with cluster occurs every " + UpdateSensorNode_interval + " minute(s).");
 }
 
-// Kick it off
-Main();
+Main(); // Kick it off
