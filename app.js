@@ -13,10 +13,13 @@ var xip;
 var nodemesh = [];
 var location;
 
+// Include local files
+const init = require("./lib/init.js");
+
+// Include NPM modules
 //const tcpping = require("tcp-ping");
 const ping = require ("ping");
 const elasticsearch = require('elasticsearch');
-const nic = require('getmac');
 const nodename = require('os').hostname();
 const ip = require('quick-local-ip').getLocalIP4();
 const publicIP = require('public-ip');
@@ -33,16 +36,7 @@ const client = new elasticsearch.Client( {
     log: 'error',
     ssl: {rejectUnauthorized: false}
 });
-function getMac(){
-    //return this device's internal IP address
-    return new Promise(function(resolve, reject){
-        nic.getMac(function(err,macAddress){
-            macaddr = macAddress.replace(/:/g,'-');
-            console.log("[x] Loaded MAC address: " + macaddr);
-            resolve(macaddr);
-        });
-    });
-}
+
 function getpublicIP(){
     //return this device's external IP address.
     return new Promise(function(resolve,reject){
@@ -131,7 +125,7 @@ async function Main(){
     console.log("[x] Loaded nodename: " + nodename);
     console.log("[x] Loaded internal IP: " + ip);
     xip = await getpublicIP(); console.log("[x] Loaded External IP: " + xip);
-    macaddr = await getMac();
+    macaddr = await init.getMac();
     location = await getLocation();
     await CheckELK();
     await startWebServer();
