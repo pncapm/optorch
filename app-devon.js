@@ -1,6 +1,6 @@
 // variables that can be set
 const ver = "0.4";
-const elkDB = 'https://optorch.com:9201';
+elkDB = 'https://optorch.com:9201';
 var wwwport = 9000; // port the web server should use (must be > 1024)
 const ping_internal = 5; // how long between pings in seconds
 const updatemesh_interval = 1 // how long between getting new mesh data in *minutes*
