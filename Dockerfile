@@ -1,4 +1,4 @@
-FROM node:11
+FROM arm32v7/node:11
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install --loglevel=error
