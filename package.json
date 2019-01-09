@@ -8,17 +8,14 @@
   "description": "",
   "main": "app.js",
   "dependencies": {
-    "auto-updater": "^1.0.2",
-    "elasticsearch": "^15.2.0",
-    "getmac": "^1.4.6",
-    "iplocation": "^6.0.4",
-    "natman-api": "0.0.2",
-    "nodemon": "^1.18.9",
-    "ping": "^0.2.2",
-    "public-ip": "^3.0.0",
-    "quick-local-ip": "^1.0.7",
-    "tcp-ping": "^0.1.1",
-    "winston": "^3.1.0"
+    "elasticsearch": "*",
+    "getmac": "*",
+    "iplocation": "^6.1.0",
+    "ping": "*",
+    "public-ip": "*",
+    "quick-local-ip": "*",
+    "tcp-ping": "*",
+    "winston": "*"
   },
   "devDependencies": {},
   "scripts": {

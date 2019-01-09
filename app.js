@@ -20,15 +20,16 @@ const logger = require("./lib/logger.js") //implement much gooder logging
 async function Main(){ //Main loop- this sets initial values, logs startup, and then initiates loops for each activity (There's so much room for activities!)
     logger.info("Starting Operation Torch");
     const nodename = require('os').hostname(); logger.info("Loaded nodename: " + nodename);
-    const ip = require('quick-local-ip').getLocalIP4(); logger.info("Loaded internal IP: " + ip);
-    xip = await init.getpublicIP(); logger.info("Loaded External IP: " + xip);
+    //const ip = require('quick-local-ip').getLocalIP4(); logger.info("Loaded internal IP: " + ip);
+    const ip = await init.getIP(); logger.info("Loaded internal IP: " + ip);
+    const xip = await init.getpublicIP(); logger.info("Loaded External IP: " + xip);
     macaddr = await init.getMac();
     location = await init.getLocation(xip);
     await init.CheckELK();
     await webserver.startWebServer(wwwport);
     await updates.UpdateSensorNode(nodename, macaddr, ip, xip, location);
-    await updates.UpdateMesh(NodeAgeLimit);
-    var tUpdateMesh = setInterval(function(){updates.UpdateMesh(NodeAgeLimit);}, updatemesh_interval * 60000);logger.info("Starting Mesh Update loop.  " + updatemesh_interval + " minute(s) between each check in with cluster.");
+    await updates.UpdateMesh(NodeAgeLimit, macaddr, xip);
+    var tUpdateMesh = setInterval(function(){updates.UpdateMesh(NodeAgeLimit, macaddr, xip);}, updatemesh_interval * 60000);logger.info("Starting Mesh Update loop.  " + updatemesh_interval + " minute(s) between each check in with cluster.");
     var tSonarPing = setInterval(function(){sonar.Ping(ip,xip,nodename,macaddr);}, ping_internal * 1000);logger.info("Starting Sonar Ping loop.  Running " + global.nodemesh.length + " test(s) every " + ping_internal + " seconds.");
     var tUpdateSensorNode = setInterval(function(){updates.UpdateSensorNode(nodename, macaddr, ip, xip, location);}, UpdateSensorNode_interval * 60000);logger.info("Starting Update Loop for this node.  Heartbeat with cluster occurs every " + UpdateSensorNode_interval + " minute(s).");
 }
