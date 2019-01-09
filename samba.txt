@@ -1,5 +1,7 @@
 install: sudo apt-get install samba
 
+sudo smbpasswd -a pi
+
 modify file: /etc/samba/smb.conf
 
 [PiShare]
