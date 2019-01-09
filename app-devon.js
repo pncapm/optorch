@@ -38,7 +38,7 @@ function getMac(){
     return new Promise(function(resolve, reject){
         nic.getMac(function(err,macAddress){
             macaddr = macAddress.replace(/:/g,'-');
-            console.log("[x] Loaded MAC address: " + macaddr);
+            console.log("Loaded MAC address: " + macaddr);
             resolve(macaddr);
         });
     });
@@ -58,14 +58,14 @@ function getLocation(){
     return iplocation(xip, ["https://ipinfo.io/*"])
     .then((result)=> {
         location = result;
-        console.log("[x] Loaded GEO: " + location.latitude + "/" + location.longitude);
+        console.log("Loaded GEO: " + location.latitude + "/" + location.longitude);
         if (!location.latitude || !location.longitude){
             throw ("Process ran, but no latitude or longitude was returned");
         };
         return(location);
     })
     .catch(err => {
-        console.log("[!] Could not get Location, so using 0/0 (" + err + ")");
+        logger.warn("Could not get Location, so using 0/0 (" + err + ")");
         var location = {latitude:0,longitude:0};
         return(location);
     });
@@ -77,10 +77,10 @@ function CheckELK(){
             requestTimeout: 3000 // use 3s timeout for ELK
         }, function (error) {
             if (error) {
-            console.error("[!] ELK cluster cannot be reached at: " + elkDB + ".  Bailing out.");
+            logger.error("ELK cluster cannot be reached at: " + elkDB + ".  Bailing out.");
             process.exit(1);
             } else {
-            console.log("[x] Confirmed ELK cluster can be reached at: " + elkDB + ".");
+            console.log("Confirmed ELK cluster can be reached at: " + elkDB + ".");
             resolve();
             }
         });
@@ -119,7 +119,7 @@ function startWebServer(){
                 }
             });
         }).listen(wwwport);
-        console.log("[x] Started internal webserver on port "+wwwport);
+        console.log("Started internal webserver on port "+wwwport);
         resolve();
     });
 }
@@ -127,10 +127,10 @@ function startWebServer(){
 //main loop
 async function Main(){
     //Main loop- this sets initial values, logs startup, and then initiates loops for each activity
-    console.log("[x] Starting Operation Torch " + ver + " on " + Date());
-    console.log("[x] Loaded nodename: " + nodename);
-    console.log("[x] Loaded internal IP: " + ip);
-    xip = await getpublicIP(); console.log("[x] Loaded External IP: " + xip);
+    console.log("Starting Operation Torch " + ver + " on " + Date());
+    console.log("Loaded nodename: " + nodename);
+    console.log("Loaded internal IP: " + ip);
+    xip = await getpublicIP(); console.log("Loaded External IP: " + xip);
     macaddr = await getMac();
     location = await getLocation();
     await CheckELK();
@@ -329,7 +329,7 @@ function UpdateSensorNode() {
                 });
             } else {
                 //This is a new node or node was deleted.  Create a new instance
-                console.log("[x] CREATING new entry for this sensor node.");
+                console.log("CREATING new entry for this sensor node.");
                 client.index({
                     index: 'sensor_grid',
                     type: 'sensor_node',
