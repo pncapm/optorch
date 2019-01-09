@@ -1,7 +1,7 @@
-<<<<<<< HEAD
 Test
-
-=======
 hello world
+This is a line of text.
 this is my file... really... nobody else's
->>>>>>> 236a3410320df75b90a18a7de37ff7a759cfc46c
+
+
+Something Fun
