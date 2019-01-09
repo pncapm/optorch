@@ -1,2 +1,7 @@
+<<<<<<< HEAD
 Test
 
+=======
+hello world
+this is my file... really... nobody else's
+>>>>>>> 236a3410320df75b90a18a7de37ff7a759cfc46c
