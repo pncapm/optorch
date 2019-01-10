@@ -13,7 +13,6 @@
     "iplocation": "^6.1.0",
     "ping": "*",
     "public-ip": "*",
-    "quick-local-ip": "*",
     "tcp-ping": "*",
     "winston": "*"
   },
