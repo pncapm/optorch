@@ -1,0 +1,11 @@
+
+[PiShare]
+ comment=Raspi
+ path=/home/pi
+ browseable=Yes
+ writeable=Yes
+ #only guest=No
+ guest ok = no
+ create mask=0777
+ directiory mask=0777
+ public=no
