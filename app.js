@@ -20,7 +20,6 @@ const logger = require("./lib/logger.js") //implement much gooder logging
 async function Main(){ //Main loop- this sets initial values, logs startup, and then initiates loops for each activity (There's so much room for activities!)
     logger.info("Starting Operation Torch");
     const nodename = require('os').hostname(); logger.info("Loaded nodename: " + nodename);
-    //const ip = require('quick-local-ip').getLocalIP4(); logger.info("Loaded internal IP: " + ip);
     const ip = await init.getIP(); logger.info("Loaded internal IP: " + ip);
     const xip = await init.getpublicIP(); logger.info("Loaded External IP: " + xip);
     macaddr = await init.getMac();
