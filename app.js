@@ -23,8 +23,7 @@ async function Main(){ //Main loop- this sets initial values, logs startup, and 
     //const ip = require('quick-local-ip').getLocalIP4(); logger.info("Loaded internal IP: " + ip);
     const ip = await init.getIP(); logger.info("Loaded internal IP: " + ip);
     const xip = await init.getpublicIP(); logger.info("Loaded External IP: " + xip);
-    //macaddr = await init.getMac();
-    macaddr="40-8D-ZZ-RY-ZZ-9Z";
+    macaddr = await init.getMac();
     location = await init.getLocation(xip);
     await init.CheckELK();
     await webserver.startWebServer(wwwport);
