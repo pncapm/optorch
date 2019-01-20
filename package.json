@@ -11,6 +11,7 @@
     "elasticsearch": "*",
     "getmac": "*",
     "iplocation": "^6.1.0",
+    "properties-parser": "*",
     "ping": "*",
     "public-ip": "*",
     "tcp-ping": "*",
