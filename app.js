@@ -16,6 +16,8 @@ const webserver = require("./lib/webserver.js") // my internal webserver startup
 const updates = require("./lib/updates.js") //functions that update the sensor grid
 const sonar = require("./lib/sonar.js") // all functions intended to run as loops against the nodemesh array and record results to cluster
 const logger = require("./lib/logger.js") //implement much gooder logging
+const helper = require ("./lib/helper.js") // helper files to help in debugging.  None of these should be left in for production.
+
 
 //main loop
 async function Main(){ //Main loop- this sets initial values, logs startup, and then initiates loops for each activity (There's so much room for activities!)
@@ -25,7 +27,7 @@ async function Main(){ //Main loop- this sets initial values, logs startup, and 
     const xip = await init.getpublicIP(); logger.info("Loaded External IP: " + xip);
     macaddr = await init.getMac();
     location = await init.getLocation(xip);
-    const wwwport = parseInt(init.getWebPort()); //Added by DKM
+    const wwwport = parseInt(init.getConfigOptions()); //Added by DKM
     await init.CheckELK();
     await webserver.startWebServer(wwwport);
     await updates.UpdateSensorNode(nodename, macaddr, ip, xip, location, wwwport);
