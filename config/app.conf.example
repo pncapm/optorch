@@ -1,0 +1,4 @@
+# Copy (or rename) this file to: app.conf to take effect
+
+# Uncomment to change the port your node will use for TCP checks. Default: 9000
+# webport = 9000
