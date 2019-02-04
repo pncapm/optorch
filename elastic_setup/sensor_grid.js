@@ -1,5 +1,5 @@
 global.elkDB = 'https://optorch.com:9201';
-const indexname = "sensor_grid";
+const indexname = 'sensor_gridv2';
 
 var client = require('../lib/elk.js');
 
@@ -30,14 +30,25 @@ function recreate(){
             console.log("create",resp);
             client.indices.putMapping({
                 index: indexname,
-                type: "sensor_node",
+                type: "node",
                 body:{
-                    sensor_node:{
+                    node:{
                         properties:{
+                            //sensor_name
+                            "active" : {type:"boolean"},
+                            //sensor_type- grid:tcpping:ping:sql:post:ldap:dns:smtp
+                            //URL (IP, server name, URL)
+                            "port": {type:"short"}, // (any port needed)
+                            //payload
+                            //resp_code
+                            //resp_criteria
+                            "icmp": {type:"boolean"},
+                            //username
+                            //password
+                            //xIP
+                            //sensor_mac
                             "timestamp" : {type:"date"},
-                            "location": {type:"geo_point"},
-                            "latitude": {type:"half_float"},
-                            "longitude": {type:"half_float"}
+                            "location": {type:"geo_point"}
                         }
                     }
                 }
@@ -46,4 +57,5 @@ function recreate(){
         });
     });
 }
-removedata();
+//removedata();
+recreate();
