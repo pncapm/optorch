@@ -29,8 +29,9 @@ async function Main(){ //Main loop- this sets initial values, logs startup, and 
     location = await init.getLocation(xip);
     const wwwport = parseInt(init.getConfigOptions()); //Added by DKM
     await init.CheckELK();
-    await webserver.startWebServer(wwwport);
-    await updates.UpdateSensorNode(nodename, macaddr, ip, xip, location, wwwport);
+    await webserver.startWebServer(wwwport, macaddr);
+    const CheckTCP = await init.CheckTCPSelf(xip, wwwport);
+    await updates.UpdateSensorNode(nodename, macaddr, ip, xip, location, wwwport, CheckTCP);
     await updates.UpdateMesh(NodeAgeLimit, macaddr, xip);
     //await helper.Display_nodemesh();
     var tUpdateMesh = setInterval(function(){updates.UpdateMesh(NodeAgeLimit, macaddr, xip);}, updatemesh_interval * 60000);logger.info("Starting Mesh Update loop.  " + updatemesh_interval + " minute(s) between each check in with cluster.");
