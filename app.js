@@ -34,8 +34,9 @@ async function Main(){ //Main loop- this sets initial values, logs startup, and 
     await updates.UpdateMesh(NodeAgeLimit, macaddr, xip);
     //await helper.Display_nodemesh();
     var tUpdateMesh = setInterval(function(){updates.UpdateMesh(NodeAgeLimit, macaddr, xip);}, updatemesh_interval * 60000);logger.info("Starting Mesh Update loop.  " + updatemesh_interval + " minute(s) between each check in with cluster.");
-    var tUpdateSensorNode = setInterval(function(){updates.UpdateSensorNode(nodename, macaddr, ip, xip, location, wwwport);}, UpdateSensorNode_interval * 60000);logger.info("Starting Update Loop for this node.  Heartbeat with cluster occurs every " + UpdateSensorNode_interval + " minute(s).");
-    var tSonarPing = setInterval(function(){sonar.Ping(ip,xip,nodename,macaddr, location);}, ping_interval * 1000);logger.info("Starting Sonar Ping loop.  Running " + global.nodemesh.length + " test(s) every " + ping_interval + " second(s).");
+    var tSonarPing = setInterval(function(){sonar.Ping(ip,xip,nodename,macaddr, location);}, ping_interval * 1000);logger.info("Starting Sonar Ping loop.  Running " + global.nodemesh.length + " test(s) every " + ping_interval + " seconds.");
     var tSonarTcpPing = setInterval(function(){sonar.TCPPing(ip,xip,nodename,macaddr, location);}, tcpping_interval * 1000);logger.info("Starting Sonar TCP Ping loop.  Running " + global.nodemesh.length + " test(s) every " + tcpping_interval + " second(s).");
+    var tSonarHttpPing = setInterval(function(){sonar.HTTPPing(ip,xip,nodename,macaddr, location);}, httpping_interval * 60000);logger.info("Starting Sonar HTTP Ping loop.  Running " + global.nodemesh.length + " test(s) every " + httpping_interval + " minutes.");
+    var tUpdateSensorNode = setInterval(function(){updates.UpdateSensorNode(nodename, macaddr, ip, xip, location, wwwport);}, UpdateSensorNode_interval * 60000);logger.info("Starting Update Loop for this node.  Heartbeat with cluster occurs every " + UpdateSensorNode_interval + " minute(s).");   
 }
 Main(); // Kick it off
