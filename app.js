@@ -4,6 +4,7 @@ global.sensorgrid = "sensor_gridv2";
 //const wwwport = 9000; // port the web server should use (must be > 1024) (Commented out and moved to init.getWebPort in Main() by DKM)
 const ping_interval = 5; // how long between ICMP pings in seconds
 const tcpping_interval = 60; // how long between TCP tests in seconds (Added by DKM, set back to seconds by SXP)
+const httpping_interval = 5; // how long between HTTP tests in *minutes* (Added by DKM)
 const updatemesh_interval = 1 // how long between getting new mesh data in *minutes*
 const UpdateSensorNode_interval = 1  // how long to wait between cluster heartbeats in *minutes*
 const NodeAgeLimit = 60 //maximum age in *minutes* other nodes will be included before being ignored as dead
