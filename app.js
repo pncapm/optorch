@@ -4,6 +4,7 @@ global.sensorgrid = "sensor_gridv2";
 //const wwwport = 9000; // port the web server should use (must be > 1024) (Commented out and moved to init.getWebPort in Main() by DKM)
 const ping_interval = 5; // how long between ICMP pings in seconds
 const tcpping_interval = 60; // how long between TCP tests in seconds (Added by DKM, set back to seconds by SXP)
+const httpping_interval = 5; // how long between HTTP tests in *minutes* (Added by DKM)
 const updatemesh_interval = 1 // how long between getting new mesh data in *minutes*
 const UpdateSensorNode_interval = 1  // how long to wait between cluster heartbeats in *minutes*
 const NodeAgeLimit = 60 //maximum age in *minutes* other nodes will be included before being ignored as dead
@@ -35,8 +36,9 @@ async function Main(){ //Main loop- this sets initial values, logs startup, and 
     await updates.UpdateMesh(NodeAgeLimit, macaddr, xip);
     //await helper.Display_nodemesh();
     var tUpdateMesh = setInterval(function(){updates.UpdateMesh(NodeAgeLimit, macaddr, xip);}, updatemesh_interval * 60000);logger.info("Starting Mesh Update loop.  " + updatemesh_interval + " minute(s) between each check in with cluster.");
-    var tUpdateSensorNode = setInterval(function(){updates.UpdateSensorNode(nodename, macaddr, ip, xip, location, wwwport);}, UpdateSensorNode_interval * 60000);logger.info("Starting Update Loop for this node.  Heartbeat with cluster occurs every " + UpdateSensorNode_interval + " minute(s).");
-    var tSonarPing = setInterval(function(){sonar.Ping(ip,xip,nodename,macaddr, location);}, ping_interval * 1000);logger.info("Starting Sonar Ping loop.  Running " + global.nodemesh.length + " test(s) every " + ping_interval + " second(s).");
+    var tSonarPing = setInterval(function(){sonar.Ping(ip,xip,nodename,macaddr, location);}, ping_interval * 1000);logger.info("Starting Sonar Ping loop.  Running " + global.nodemesh.length + " test(s) every " + ping_interval + " seconds.");
     var tSonarTcpPing = setInterval(function(){sonar.TCPPing(ip,xip,nodename,macaddr, location);}, tcpping_interval * 1000);logger.info("Starting Sonar TCP Ping loop.  Running " + global.nodemesh.length + " test(s) every " + tcpping_interval + " second(s).");
+    var tSonarHttpPing = setInterval(function(){sonar.HTTPPing(ip,xip,nodename,macaddr, location);}, httpping_interval * 60000);logger.info("Starting Sonar HTTP Ping loop.  Running " + global.nodemesh.length + " test(s) every " + httpping_interval + " minutes.");
+    var tUpdateSensorNode = setInterval(function(){updates.UpdateSensorNode(nodename, macaddr, ip, xip, location, wwwport);}, UpdateSensorNode_interval * 60000);logger.info("Starting Update Loop for this node.  Heartbeat with cluster occurs every " + UpdateSensorNode_interval + " minute(s).");   
 }
 Main(); // Kick it off
