@@ -35,9 +35,10 @@ function recreate(){
                     node:{
                         properties:{
                             //sensor_name
+                            //Optorch_version
                             "active" : {type:"boolean"},
                             //sensor_type- grid:tcpping:ping:sql:post:ldap:dns:smtp
-                            //URL (IP, server name, URL)
+                            //sensor_address (IP, server name, URL)
                             "port": {type:"short"}, // (any port needed)
                             //payload
                             //resp_code
