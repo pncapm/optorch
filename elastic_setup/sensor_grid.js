@@ -39,9 +39,10 @@ function recreate(){
                             "active" : {type:"boolean"},
                             //sensor_type- grid:tcpping:ping:sql:post:ldap:dns:smtp
                             //sensor_address (IP, server name, URL)
+                            //sensor_parameter (URL subdomain, etc)
                             "port": {type:"short"}, // (any port needed)
                             //payload
-                            //resp_code
+                            //resp_code 
                             //resp_criteria
                             "icmp": {type:"boolean"},
                             //username
