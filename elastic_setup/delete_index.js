@@ -1,5 +1,5 @@
 global.elkDB = 'https://optorch.com:9201';
-const indexname = "optorch_grid";
+const indexname = "sensor_remote";
 var client = require('../lib/elk.js');
 
 function nuke(){

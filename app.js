@@ -1,6 +1,7 @@
 // variables that can be set
 global.elkDB = 'https://optorch.com:9201'; //ELK cluster location (uses a global variable as it's needed in various places)
 global.sensorgrid = "sensor_gridv2";
+global.optorch_version = "1.0"; //Manually set optorch version # to ensure everybody on the same one
 //const wwwport = 9000; // port the web server should use (must be > 1024) (Commented out and moved to init.getWebPort in Main() by DKM)
 const ping_interval = 5; // how long between ICMP pings in seconds
 const tcpping_interval = 60; // how long between TCP tests in seconds (Added by DKM, set back to seconds by SXP)
@@ -22,7 +23,7 @@ const helper = require ("./lib/helper.js") // helper files to help in debugging.
 
 //main loop
 async function Main(){ //Main loop- this sets initial values, logs startup, and then initiates loops for each activity (There's so much room for activities!)
-    logger.info("Starting Operation Torch");
+    logger.info("Starting Operation Torch " + global.optorch_version);
     const nodename = require('os').hostname(); logger.info("Loaded nodename: " + nodename);
     const ip = await init.getIP(); logger.info("Loaded internal IP: " + ip);
     const xip = await init.getpublicIP(); logger.info("Loaded External IP: " + xip);
