@@ -28,7 +28,20 @@ async function Main(){ //Main loop- this sets initial values, logs startup, and 
     const xip = await init.getpublicIP(); logger.info("Loaded External IP: " + xip);
     macaddr = await init.getMac();
     location = await init.getLocation(xip);
-    const wwwport = parseInt(init.getConfigOptions()); //Added by DKM
+    
+    const ConfigOptions = init.getConfigOptions(); //Added by DKM
+    //Added section below to extract local node web port from config options
+    var myWebPort = ConfigOptions.wwwport;
+    //If the wwwport ends up not being in our conf file or is not a valid number default it to 9000
+    if (myWebPort == undefined || isNaN(myWebPort)) {
+        logger.info("Property wwwport either not defined or is not a valid number: " + myWebPort + ". Defaulting to port 9000");
+        myWebPort = 9000;
+    }
+    else {
+        myWebPort = parseInt(myWebPort); //Force to an int type
+    }
+    const wwwport = myWebPort; //Move to a constant
+
     await init.CheckELK();
     await webserver.startWebServer(wwwport);
     await updates.UpdateSensorNode(nodename, macaddr, ip, xip, location, wwwport);
